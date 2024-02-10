@@ -1,14 +1,35 @@
+
 class Solution {
-    public int solve(String s, int i, int j){
-        if(i<0 || j==s.length()) return 0;
-        if(s.charAt(i) == s.charAt(j)) return solve(s, i-1, j+1) + 1;
-        else return 0;
-    }
-    public int countSubstrings(String s) {
-        int max = 0;
-        for(int i=0; i<s.length(); i++){
-            max += solve(s,i,i) + solve(s,i,i+1);
+public:
+    int countSubstrings(string s) {
+        int n = s.size();
+        int ans = 0;
+
+        if (n <= 0)
+            return 0;
+
+        vector<vector<bool>> dp(n, vector<bool>(n, false));
+
+       
+        for (int i = 0; i < n; ++i, ++ans)
+            dp[i][i] = true;
+
+        
+        for (int i = 0; i < n - 1; ++i) {
+            dp[i][i + 1] = (s[i] == s[i + 1]);
+            ans += (dp[i][i + 1] ? 1 : 0);
         }
-        return max;
+
+       
+        for (int len = 3; len <= n; ++len)
+            for (int i = 0, j = i + len - 1; j < n; ++i, ++j) {
+                dp[i][j] = dp[i + 1][j - 1] && (s[i] == s[j]);
+                ans += (dp[i][j] ? 1 : 0);
+            }
+
+        return ans;
     }
-}
+};
+
+
+
