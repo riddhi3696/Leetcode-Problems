@@ -11,48 +11,31 @@
  */
 class Solution {
 public:
+    // Function to calculate the diameter and height of a subtree recursively
+    pair<int, int> calculateDiameterAndHeight(TreeNode* root) {
+        if (root == nullptr) {
+            // Base case: Empty subtree has diameter and height 0
+            return {0, 0};
+        }
+
+        // Get diameter and height information for left and right subtrees
+        auto leftData = calculateDiameterAndHeight(root->left);
+        auto rightData = calculateDiameterAndHeight(root->right);
+
+        // Calculate current subtree's diameter:
+        // - Maximum path passing through root
+        // - Maximum diameter in left or right subtree
+        int currentDiameter = max(leftData.second + rightData.second, 
+                                  max(leftData.first, rightData.first));
+
+        // Calculate current subtree's height (maximum path through root)
+        int currentHeight = max(leftData.second, rightData.second) + 1;
+
+        return {currentDiameter, currentHeight};
+    }
+
     int diameterOfBinaryTree(TreeNode* root) {
-
-        vector <int> ans;
-        stack <TreeNode*> st;
-        st.push(root);
-        TreeNode* node= root;
-        
-        if(node==NULL){
-            return 0;
-        }
-
-        while(!st.empty()){
-            int c=0;
-            if(node!=NULL){
-                c++;
-                node=node->left;
-                st.push(node);
-            }
-            else{
-                ans.push_back(c);
-                c--;
-                st.pop();
-                node=st.top();
-                if(node->right!=NULL){
-                    node=node->right;
-                    st.push(node);
-                    c++;
-                }
-                else{
-                    st.pop();
-                    c--;
-                }
-            }
-        }
-        int max=0;
-        for(int i=0;i<ans.size();i++){
-            if(ans[i]>max){
-                max=ans[i];
-                }
-            }
-
-        return max;
-
+        // The diameter of the entire tree is the maximum diameter found across subtrees
+        return calculateDiameterAndHeight(root).first;
     }
 };
