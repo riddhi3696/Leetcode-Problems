@@ -1,27 +1,21 @@
 class Solution {
 public:
-
-long long countSubarrays(vector<int>& nums, int k) {
-    int n = nums.size();
-    long long result = 0;
-    
-    for (int i = 0; i < n; ++i) {
-        int maxElement = nums[i];
-        unordered_map<int, int> frequency;
-        frequency[maxElement] = 1;
-        
-        for (int j = i; j < n; ++j) {
-            maxElement = max(maxElement, nums[j]);
-            frequency[nums[j]]++;
+    long long countSubarrays(vector<int>& nums, int k) {
+        long long int max_num = *max_element(nums.begin(),nums.end()),count = 0;
+        long long int left = 0,right = 0,ans = 0;
+        while(right<nums.size()){
+            if(nums[right] == max_num)count++;
             
-            if (frequency[maxElement] >= k) {
-                result += n - j;
-                break;
-            }
+            while(count>=k){
+                if(nums[left]==max_num)count--;
+                left++;
+                ans += nums.size()-right;
+            }    
+            right++;
         }
-    }
-    
-    return result;
-}
 
+
+        return ans;
+        
+    }
 };
