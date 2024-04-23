@@ -1,41 +1,44 @@
 class Solution {
-    public List<Integer> findMinHeightTrees(int n, int[][] edges) {
-        if(n == 1) return Collections.singletonList(0);
+public:
+    vector<int> findMinHeightTrees(int n, vector<vector<int>>& edges) {
+        if (n == 1) return {0};
+    
+        std::vector<std::list<int>> adjacency_list(n);
+        std::vector<int> degree(n, 0);
+        for (auto& edge : edges) {
+            int u = edge[0], v = edge[1];
+            adjacency_list[u].push_back(v);
+            adjacency_list[v].push_back(u);
+            degree[u]++;
+            degree[v]++;
+        }
         
-        int ind[] = new int[n];
-        Map<Integer, List<Integer>> map = new HashMap();
-        for(int[] edge: edges) {
-            ind[edge[0]]++;
-            ind[edge[1]]++;
-            map.putIfAbsent(edge[0], new ArrayList());
-            map.putIfAbsent(edge[1], new ArrayList());
-            map.get(edge[0]).add(edge[1]);
-            map.get(edge[1]).add(edge[0]);
+        std::queue<int> leaves;
+        for (int i = 0; i < n; ++i) {
+            if (degree[i] == 1) leaves.push(i);
         }
-
-        Queue<Integer> queue = new LinkedList();
-        for(int i=0;i<ind.length;i++) {
-            if(ind[i] == 1) {
-                queue.add(i);
-            }
-        }
-
-        int processed = 0;
-        while(n - processed > 2) {
-            int size = queue.size();
-            processed += size;
-            for(int i=0;i<size;i++) {
-                int poll = queue.poll();
-                for(int adj: map.get(poll)) {
-                    if(--ind[adj] == 1) {
-                        queue.add(adj);
+        
+        int remainingNodes = n;
+        while (remainingNodes > 2) {
+            int leavesCount = leaves.size();
+            remainingNodes -= leavesCount;
+            for (int i = 0; i < leavesCount; ++i) {
+                int leaf = leaves.front();
+                leaves.pop();
+                for (int neighbor : adjacency_list[leaf]) {
+                    if (--degree[neighbor] == 1) {
+                        leaves.push(neighbor);
                     }
                 }
             }
         }
-
-        List<Integer> list = new ArrayList();
-        list.addAll(queue);
-        return list;
+        
+        std::vector<int> result;
+        while (!leaves.empty()) {
+            result.push_back(leaves.front());
+            leaves.pop();
+        }
+        
+        return result;
     }
-}
+};
