@@ -1,73 +1,18 @@
 class Solution {
 public:
     vector<string> sortPeople(vector<string>& names, vector<int>& heights) {
-        mergeSort(names, heights, 0, heights.size() - 1);
-        return names;
-    }
-
-private:
-    void mergeSort(vector<string>& names, vector<int>& heights, int start,
-                   int end) {
-        if (start < end) {
-            int mid = start + (end - start) / 2;
-            mergeSort(names, heights, start, mid);
-            mergeSort(names, heights, mid + 1, end);
-            merge(names, heights, start, mid, end);
+        unordered_map <int,string> m;
+        vector<int> arr;
+        vector<string> res;
+        for(int i=0;i<names.size();i++){
+            m[heights[i]]=names[i];
         }
-    }
-
-    void merge(vector<string>& names, vector<int>& heights, int start, int mid,
-               int end) {
-        int leftSize = mid - start + 1;
-        int rightSize = end - mid;
-
-        // Create temporary vectors
-        vector<int> leftHeights(leftSize);
-        vector<int> rightHeights(rightSize);
-        vector<string> leftNames(leftSize);
-        vector<string> rightNames(rightSize);
-
-        // Copy data to temporary vectors
-        for (int i = 0; i < leftSize; i++) {
-            leftHeights[i] = heights[start + i];
-            leftNames[i] = names[start + i];
+        sort(heights.begin(),heights.end());
+        for(int i=heights.size()-1;i>=0;i--){
+             if (m.find(heights[i])!=m.end()) {
+        res.push_back(m.find(heights[i])->second);
+    } 
         }
-        for (int j = 0; j < rightSize; j++) {
-            rightHeights[j] = heights[mid + 1 + j];
-            rightNames[j] = names[mid + 1 + j];
-        }
-
-        // Merge the temporary vectors
-        int leftIndex = 0, rightIndex = 0;
-        int mergeIndex = start;
-        while (leftIndex < leftSize && rightIndex < rightSize) {
-            if (leftHeights[leftIndex] >=
-                rightHeights[rightIndex]) {  // Descending order
-                heights[mergeIndex] = leftHeights[leftIndex];
-                names[mergeIndex] = leftNames[leftIndex];
-                leftIndex++;
-            } else {
-                heights[mergeIndex] = rightHeights[rightIndex];
-                names[mergeIndex] = rightNames[rightIndex];
-                rightIndex++;
-            }
-            mergeIndex++;
-        }
-
-        // Copy remaining elements of leftHeights, if any
-        while (leftIndex < leftSize) {
-            heights[mergeIndex] = leftHeights[leftIndex];
-            names[mergeIndex] = leftNames[leftIndex];
-            leftIndex++;
-            mergeIndex++;
-        }
-
-        // Copy remaining elements of rightHeights, if any
-        while (rightIndex < rightSize) {
-            heights[mergeIndex] = rightHeights[rightIndex];
-            names[mergeIndex] = rightNames[rightIndex];
-            rightIndex++;
-            mergeIndex++;
-        }
+        return res;
     }
 };
